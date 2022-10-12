@@ -1,18 +1,23 @@
-import psql from "../db/db";
+import psql from "../db/db.js";
 const connection = psql();
 
 const verifyToken = async (req, res, next) => {
-    const { token } = req.headers;
+    try{
+        const { authorization } = req.headers;
+        const tokenHeader = authorization?.replace('Bearer ', '');
 
-    if(!token){
-        return res.sendStatus(409);
+        const session = await connection.query('SELECT * FROM sessions WHERE token=$1',[tokenHeader]);
+
+        if(!session.rows[0]){
+            return res.sendStatus(401);
+        }
+
+        res.locals.userId = session.rows[0].user_id;
+
+        next();
+    }catch (err){
+        res.sendStatus(500);
     }
-
-    const session = await connection.query('SELECT * FROM sessions WHERE token=$1',[token]);
-
-    if(!session.rows[0]){
-        res.sendStatus(409);
-    }
-
-    next();
 }
+
+export { verifyToken }
