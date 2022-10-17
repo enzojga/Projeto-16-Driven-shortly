@@ -13,4 +13,6 @@ app.use(urlsRouter);
 app.use(usersRouter);
 app.use(rankingRouter);
 
-app.listen(5000, () => {console.log("Ouvindo na porta 5000")});
+const port = process.env.PORT || 5000;
+
+app.listen(port, () => {console.log(`Ouvindo porta ${port}`)});

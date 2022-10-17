@@ -10,6 +10,9 @@ export default function psql(){
     try{
         const conn = new Pool({
             connectionString: process.env.DATABASE_URL,
+            ssl: {
+                rejectUnauthorized: false
+            }
         });
     return conn;
 
